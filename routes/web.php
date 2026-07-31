@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LogisticController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MasterController;
 use App\Http\Controllers\SettingController;
@@ -30,6 +31,12 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::post('/tambah_vendor', [MasterController::class, 'tambah_vendor'])->name('Tambah_Vendor');
     Route::post('/edit_vendor/{id}', [MasterController::class, 'edit_vendor'])->name('Edit_Vendor');
     Route::delete('/vendor/{vendor}', [MasterController::class, 'destroyVendor'])->name('Vendor.destroy');
+
+    Route::get('/warehouse', [MasterController::class, 'halamanwarehouse'])->name('HalamanWarehouse');
+    Route::get('/dwarehouse/{id }', [MasterController::class, 'halamandwarehouse'])->name('HalamanDWarehouse');
+    Route::post('/tambah_warehouse', [MasterController::class, 'tambah_warehouse'])->name('Tambah_Warehouse');
+    Route::post('/edit_warehouse/{id}', [MasterController::class, 'edit_warehouse'])->name('Edit_Warehouse');
+    Route::delete('/warehouse/{warehouse}', [MasterController::class, 'destroywarehouse'])->name('Warehouse.destroy');
 
     Route::get('/brand', [MasterController::class, 'halamanbrand'])->name('HalamanBrand');
     Route::post('/tambah_brand', [MasterController::class, 'tambah_brand'])->name('Tambah_Brand');
@@ -72,4 +79,15 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::post('/import-stock', [SettingController::class, 'importStock'])->name('import.stock');
     Route::get('/download-template-stock/{id}', [SettingController::class, 'downloadTemplateStock'])
         ->name('download.template.stock');
+
+    //logistic
+    Route::get('/internaldelivery', [LogisticController::class, 'halamaninternaldelivery'])->name('HalamanInternalDelivery');
+    Route::get('/tinternaldelivery', [LogisticController::class, 'halamantinternaldelivery'])->name('HalamanTInternalDelivery');
+    Route::get('/internal-delivery/detail/{id}', [LogisticController::class, 'dinternaldelivery']);
+    Route::get('/tinternaldelivery', [LogisticController::class, 'halamantinternaldelivery'])->name('HalamanTInternalDelivery');
+    Route::get(
+        '/internal-delivery/items/{warehouse_id}',
+        [LogisticController::class, 'getItemsByWarehouse']
+    )->name('internaldelivery.items');
+    Route::post('/tambah_internaldelivery', [LogisticController::class, 'tambah_internaldelivery'])->name('Tambah_InternalDelivery');
 });

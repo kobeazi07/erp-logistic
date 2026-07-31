@@ -17,6 +17,7 @@
                       <li><a href="{{ Route('HalamanJabatan') }}">Jabatan</a></li>
                       <li><a href="">Item Supplier</a></li>
                       <li><a href="{{ Route('HalamanItem') }}">Item</a></li>
+                      <li><a href="{{ Route('HalamanWarehouse') }}">Warehouse</a></li>
                   </ul>
               </li>
               <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
@@ -28,6 +29,13 @@
                       {{-- <li><a href="./chart-chartist.html">Chartist</a></li>
                       <li><a href="./chart-sparkline.html">Sparkline</a></li>
                       <li><a href="./chart-peity.html">Peity</a></li> --}}
+                  </ul>
+              </li>
+              <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                          class="icon icon-chart-bar-33"></i><span class="nav-text">Logistic</span></a>
+                  <ul aria-expanded="false">
+                      <li><a href="{{ Route('HalamanInternalDelivery') }}">Internal Delivery Note</a></li>
+
                   </ul>
               </li>
               <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i

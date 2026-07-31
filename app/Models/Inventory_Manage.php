@@ -16,8 +16,8 @@ class Inventory_Manage extends Model
         return $this->belongsTo(Items::class, 'item_id');
     }
 
-    public function cabang()
+    public function warehouse()
     {
-        return $this->belongsTo(Cabang::class, 'cabang_id');
+        return $this->belongsTo(Warehouses::class, 'warehouse_id');
     }
 }

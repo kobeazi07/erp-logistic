@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Cabang;
 use App\Models\Vendor;
+use App\Models\Warehouses;
 use App\Models\Brand;
 use App\Models\Unit;
 use App\Models\Kategori;
@@ -233,6 +234,115 @@ class MasterController extends Controller
             return response()->json([
                 'status'  => 1,
                 'message' => 'Data vendor berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    //warehouse
+    public function halamanwarehouse()
+    {
+        $cabang = Cabang::get();
+        $cabangss = Cabang::get();
+        $warehouse = Warehouses::get();
+        return view('backend.pages.warehouse', compact('warehouse', 'cabang', 'cabangss'));
+    }
+    public function halamandwarehouse($id)
+    {
+        $warehouse = Warehouses::find($id);
+        $itemv = Inventory_Manage::where('warehouse_id', $id)->get();
+        return view('backend.pages.dwarehouse', compact('warehouse', 'itemv'));
+    }
+    public function tambah_warehouse(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $prefix = Prefix::where('type', 7)->lockForUpdate()->first();
+
+            if (!$prefix) {
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Prefix untuk jabatan tidak ditemukan'
+                ], 500);
+            }
+
+            $kode_warehouse = $prefix->prefix . str_pad($prefix->next_number, 3, '0', STR_PAD_LEFT);
+            $warehouse = Warehouses::create([
+                'kode_warehouse'   => $kode_warehouse,
+                'prefix' => $prefix->prefix,
+                'cabang_id' => $request->cabang_id,
+                'number' => $prefix->next_number,
+                'warehouse_name' => $request->warehouse_name
+            ]);
+
+            // increment number
+            $prefix->increment('next_number');
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'warehouse berhasil ditambahkan'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => 0,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function edit_warehouse(Request $request, $id)
+    {
+        $warehouse =  Warehouses::find($id);
+        $data = [
+            'kode_warehouse'   => $warehouse->kode_warehouse,
+            'warehouse_name' => $request->warehouse_name,
+            'cabang_id' => $request->cabang_id
+        ];
+
+        // update data
+        Warehouses::where('id', $id)->update($data);
+        //  dd($id);   
+
+        return response()->json([
+            'status' => 1,
+            'message' => 'Data warehouse berhasil diupdate'
+        ]);
+    }
+    public function destroywarehouse(Warehouses $warehouse)
+    {
+        DB::beginTransaction();
+
+        try {
+            $prefix = Prefix::where('type', 6)->lockForUpdate()->first();
+
+            if (!$prefix) {
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Prefix tidak ditemukan'
+                ], 500);
+            }
+
+            $number = $warehouse->number;
+            if ($number == ($prefix->next_number - 1)) {
+                $prefix->next_number = $prefix->next_number - 1;
+                $prefix->save();
+            }
+            $warehouse->delete();
+            DB::commit();
+
+            return response()->json([
+                'status'  => 1,
+                'message' => 'Data warehouse berhasil dihapus'
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

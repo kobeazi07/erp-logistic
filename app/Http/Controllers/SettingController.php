@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use App\Models\Prefix;
 use App\Models\Cabang;
 use App\Models\Inventory_Manage;
+use App\Models\Warehouses;
 
 class SettingController extends Controller
 {
@@ -45,7 +46,7 @@ class SettingController extends Controller
 
     public function halamanmminstock()
     {
-        $prefix = Prefix::get();
+        $minstock = Prefix::get();
         return view('backend.pages.minstock', compact('prefix'));
     }
 
@@ -93,18 +94,16 @@ class SettingController extends Controller
 
                 if ($key == 0) continue;
 
-                // ✅ bersihkan data
+                // bersihkan data
                 $inv_id = trim($row[1] ?? '');
                 $stok   = trim($row[4] ?? '');
-
-                // ❗ validasi
+                //validasi
                 if (!$inv_id || !is_numeric($stok) || $stok < 0) {
                     $skipped++;
                     $errors[] = "Baris " . ($key + 1) . " invalid";
                     continue;
                 }
-
-                // ❗ update + validasi keberadaan
+                //update + validasi keberadaan
                 $affected = Inventory_Manage::where('id', $inv_id)
                     ->update(['stok' => $stok]);
 
